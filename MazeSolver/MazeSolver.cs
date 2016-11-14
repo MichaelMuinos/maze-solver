@@ -28,16 +28,16 @@ namespace MazeSolver {
 			
 			Bitmap inputMaze = new Bitmap (@maze.getSourcePath());
 			Bitmap outputMaze = new Bitmap (inputMaze.Width, inputMaze.Height);
-			for (int x = 0; x < inputMaze.Width; ++x) {
-				for (int y = 0; y < inputMaze.Height; ++y) {
-					outputMaze.SetPixel(x, y, inputMaze.GetPixel(x, y));
-					if(!foundStart && extractColor(inputMaze.GetPixel(x, y)) == Shade.Red) {
-						List<Tuple<int,int>> adjacentStartPixels = GetAdjacent(new Tuple<int,int>(x, y));
-						for(int z = 0; z < adjacentStartPixels.Count; z++) {
-							Tuple<int,int> adjTemp = adjacentStartPixels[z];
-							if(extractColor(inputMaze.GetPixel(adjTemp.Item1, adjTemp.Item2)) == Shade.White) {
-								xStart = x;
-								yStart = y;
+			for (int i = 0; i < inputMaze.Width; ++i) {
+				for (int j = 0; j < inputMaze.Height; ++j) {
+					outputMaze.SetPixel(i, j, inputMaze.GetPixel(i, j));
+					if(!foundStart && extractColor(inputMaze.GetPixel(i, j)) == Shade.Red) {
+						List<Tuple<Point>> adjacentStartPixels = GetAdjacent(new Tuple<Point>(new Point(i, j)));
+						for(int k = 0; k < adjacentStartPixels.Count; k++) {
+							Tuple<Point> adjTemp = adjacentStartPixels[k];
+							if(extractColor(inputMaze.GetPixel(adjTemp.Item1.x, adjTemp.Item1.y)) == Shade.White) {
+								xStart = i;
+								yStart = j;
 								foundStart = true;
 							}
 						}
@@ -45,42 +45,42 @@ namespace MazeSolver {
 				}
 			}
 			
-			List<Tuple<int,int>> solution = performBFS(new Tuple<int,int>(xStart, yStart), inputMaze);
+			List<Tuple<Point>> solution = performBFS(new Tuple<Point>(new Point(xStart, yStart)), inputMaze);
 			if(solution != null) {
 				for(int i = 0; i < solution.Count; i++) {
-					outputMaze.SetPixel(solution[i].Item1, solution[i].Item2, Color.Green);
+					outputMaze.SetPixel(solution[i].Item1.x, solution[i].Item1.y, Color.Green);
 				}
 			}
 			
 			outputMaze.Save (@maze.getDestinationPath());
 		}
 		
-		private List<Tuple<int,int>> performBFS(Tuple<int,int> start, Bitmap maze) {
-			Queue<List<Tuple<int,int>>> queue = new Queue<List<Tuple<int,int>>>();
-			HashSet<Tuple<int,int>> hashSet = new HashSet<Tuple<int,int>>();
-			List<Tuple<int,int>> startList = new List<Tuple<int, int>>();
+		private List<Tuple<Point>> performBFS(Tuple<Point> start, Bitmap maze) {
+			Queue<List<Tuple<Point>>> queue = new Queue<List<Tuple<Point>>>();
+			HashSet<Tuple<Point>> hashSet = new HashSet<Tuple<Point>>();
+			List<Tuple<Point>> startList = new List<Tuple<Point>>();
 			startList.Add(start);
 			queue.Enqueue(startList);
 			
 			while(queue.Count != 0) {
-				List<Tuple<int,int>> temp = new List<Tuple<int, int>>();
+				List<Tuple<Point>> temp = new List<Tuple<Point>>();
 				temp.AddRange(queue.Dequeue());
-				Tuple<int,int> endOfTemp = temp[temp.Count - 1];
+				Tuple<Point> endOfTemp = temp[temp.Count - 1];
 				
-				if(extractColor(maze.GetPixel(endOfTemp.Item1, endOfTemp.Item2)) == Shade.Blue) {
+				if(extractColor(maze.GetPixel(endOfTemp.Item1.x, endOfTemp.Item1.y)) == Shade.Blue) {
 					return temp;
 				}
 				
-				List<Tuple<int,int>> adjacentPositions = new List<Tuple<int, int>>();
+				List<Tuple<Point>> adjacentPositions = new List<Tuple<Point>>();
 				adjacentPositions.AddRange(GetAdjacent(endOfTemp));
 				for(int i = 0; i < adjacentPositions.Count; i++) {
-					Tuple<int,int> adjacentTemp = adjacentPositions[i];
+					Tuple<Point> adjacentTemp = adjacentPositions[i];
 					if(!hashSet.Contains(adjacentTemp)) {
-						Shade color = extractColor(maze.GetPixel(adjacentTemp.Item1, adjacentTemp.Item2));
+						Shade color = extractColor(maze.GetPixel(adjacentTemp.Item1.x, adjacentTemp.Item1.y));
 						if(color == Shade.White || color == Shade.Blue) {
 							hashSet.Add(adjacentTemp);
 							// Add new path to queue with extra adjacent pixel
-							List<Tuple<int,int>> list = new List<Tuple<int, int>>();
+							List<Tuple<Point>> list = new List<Tuple<Point>>();
 							list.AddRange(temp);
 							list.Add(adjacentTemp);
 							queue.Enqueue(list);
@@ -91,13 +91,15 @@ namespace MazeSolver {
 			return null;
 		}
 		
-		private List<Tuple<int,int>> GetAdjacent(Tuple<int,int> position) {
-			List<Tuple<int,int>> list = new List<Tuple<int,int>>();
+		private List<Tuple<Point>> GetAdjacent(Tuple<Point> position) {
+			List<Tuple<Point>> list = new List<Tuple<Point>>();
+			int xCoord = position.Item1.x;
+			int yCoord = position.Item1.y;
 			// add all adjacent pixels from position to a list
-			list.Add(new Tuple<int,int>(position.Item1 - 1, position.Item2));
-			list.Add(new Tuple<int,int>(position.Item1 + 1, position.Item2));
-			list.Add(new Tuple<int,int>(position.Item1, position.Item2 - 1));
-			list.Add(new Tuple<int,int>(position.Item1, position.Item2 + 1));
+			list.Add(new Tuple<Point>(new Point(xCoord - 1, yCoord)));
+			list.Add(new Tuple<Point>(new Point(xCoord + 1, yCoord)));
+			list.Add(new Tuple<Point>(new Point(xCoord, yCoord - 1)));
+			list.Add(new Tuple<Point>(new Point(xCoord, yCoord + 1)));
 			return list;
 		}
 		
@@ -106,7 +108,7 @@ namespace MazeSolver {
 		    if(color.GetBrightness() > 0.8) return Shade.White;
 		    
 		    if(color.GetHue() < 30) return Shade.Red;
-	    	if(hue < 270 && hue > 210) return Shade.Blue;
+		    if(color.GetHue() < 270 && color.GetHue() > 210) return Shade.Blue;
 		  
 	    	return Shade.Red;
 		}
