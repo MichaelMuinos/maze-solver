@@ -1,0 +1,6 @@
+C:\Users\Luke\Documents\SharpDevelop Projects\MazeSolver\MazeSolver\bin\Debug\Maze.exe.config
+C:\Users\Luke\Documents\SharpDevelop Projects\MazeSolver\MazeSolver\bin\Debug\Maze.exe
+C:\Users\Luke\Documents\SharpDevelop Projects\MazeSolver\MazeSolver\bin\Debug\Maze.pdb
+C:\Users\Luke\Documents\SharpDevelop Projects\MazeSolver\MazeSolver\obj\Debug\Maze.csprojResolveAssemblyReference.cache
+C:\Users\Luke\Documents\SharpDevelop Projects\MazeSolver\MazeSolver\obj\Debug\Maze.exe
+C:\Users\Luke\Documents\SharpDevelop Projects\MazeSolver\MazeSolver\obj\Debug\Maze.pdb

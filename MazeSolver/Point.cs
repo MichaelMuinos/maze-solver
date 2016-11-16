@@ -1,16 +1,16 @@
 ﻿/*
- * Created by SharpDevelop.
  * User: Michael
  * Date: 11/14/2016
  * Time: 12:27 AM
  * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
 
 namespace MazeSolver
 {
-	
+	/*
+	 * Point struct represents a pixel coordinate on the maze picture
+	 */
 	public struct Point {
 		public int x;
 		public int y;
